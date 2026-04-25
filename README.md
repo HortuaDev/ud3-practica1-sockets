@@ -1,18 +1,14 @@
-## Getting Started
+# Juego de Dados Multijugador
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Escenario
 
-## Folder Structure
+Aplicación cliente-servidor donde varios jugadores se conectan
+a un servidor central para jugar una partida de dados tipo Generala.
+El servidor gestiona los turnos, lanza los dados y calcula puntuaciones.
+Los clientes se conectan desde distintas máquinas a través de la red.
 
-The workspace contains two folders by default, where:
+Este escenario justifica la comunicación en red porque:
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+- Los jugadores están en máquinas distintas
+- El estado del juego debe compartirse en tiempo real
+- El servidor actúa como árbitro central
