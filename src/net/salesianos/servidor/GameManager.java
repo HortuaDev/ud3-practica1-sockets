@@ -43,4 +43,11 @@ public class GameManager {
         return jugadores.size();
     }
 
+    public synchronized void broadcast(String mensaje) {
+        System.out.println("[BROADCAST] " + mensaje);
+        for (Jugador j : jugadores) {
+            j.enviar(mensaje);
+        }
+    }
+
 }
