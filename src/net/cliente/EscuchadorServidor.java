@@ -14,4 +14,19 @@ public class EscuchadorServidor extends Thread {
         setDaemon(true);
     }
 
+    @Override
+    public void run() {
+        try {
+            String mensaje;
+            while ((mensaje = in.readLine()) != null) {
+                procesarMensaje(mensaje);
+            }
+        } catch (java.io.IOException e) {
+            if (!partidaTerminada) {
+                System.out.println("Conexión con servidor perdida");
+            }
+        }
+        partidaTerminada = true;
+    }
+
 }
