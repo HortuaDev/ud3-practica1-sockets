@@ -50,4 +50,105 @@ public class GameManager {
         }
     }
 
+    // Metodos del juego
+
+    private int calcularSuma(int[] dados) {
+        int suma = 0;
+        for (int d : dados)
+            suma += d;
+        return suma;
+    }
+
+    private int calcularBonus(int[] dados) {
+        int[] freq = new int[7];
+        for (int d : dados)
+            freq[d]++;
+
+        int maxFreq = 0, pares = 0;
+        for (int i = 1; i <= 6; i++) {
+            if (freq[i] > maxFreq)
+                maxFreq = freq[i];
+            if (freq[i] >= 2)
+                pares++;
+        }
+
+        if (maxFreq == 5)
+            return 50; // Generala
+        if (maxFreq == 4)
+            return 35; // Póker
+        if (maxFreq == 3 && pares == 2)
+            return 25; // Full
+        if (esEscalera(freq))
+            return 20; // Escalera
+        if (maxFreq == 3)
+            return 15; // Trío
+        if (pares >= 2)
+            return 10; // Doble par
+        if (pares == 1)
+            return 5; // Par
+        return 0;
+    }
+
+    private String detectarCombinacion(int[] dados) {
+        int[] freq = new int[7];
+        for (int d : dados)
+            freq[d]++;
+
+        int maxFreq = 0, pares = 0;
+        for (int i = 1; i <= 6; i++) {
+            if (freq[i] > maxFreq)
+                maxFreq = freq[i];
+            if (freq[i] >= 2)
+                pares++;
+        }
+
+        if (maxFreq == 5)
+            return "GENERALA +50";
+        if (maxFreq == 4)
+            return "POKER +35";
+        if (maxFreq == 3 && pares == 2)
+            return "FULL +25";
+        if (esEscalera(freq))
+            return "ESCALERA +20";
+        if (maxFreq == 3)
+            return "TRIO +15";
+        if (pares >= 2)
+            return "DOBLE PAR +10";
+        if (pares == 1)
+            return "PAR +5";
+        return "";
+    }
+
+    private boolean esEscalera(int[] freq) {
+        boolean e1 = true, e2 = true;
+        for (int i = 1; i <= 5; i++)
+            if (freq[i] == 0)
+                e1 = false;
+        for (int i = 2; i <= 6; i++)
+            if (freq[i] == 0)
+                e2 = false;
+        return e1 || e2;
+    }
+
+    private String arrayToString(int[] arr) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0)
+                sb.append(",");
+            sb.append(arr[i]);
+        }
+        return sb.toString();
+    }
+
+    private String getMarcador() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < jugadores.size(); i++) {
+            if (i > 0)
+                sb.append(",");
+            Jugador j = jugadores.get(i);
+            sb.append(j.getNombre()).append(":").append(j.getPuntuacion());
+        }
+        return sb.toString();
+    }
+
 }
