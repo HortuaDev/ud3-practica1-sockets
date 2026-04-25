@@ -81,4 +81,16 @@ public class EscuchadorServidor extends Thread {
             System.out.println("Error: " + mensaje.substring(6));
         }
     }
+
+    public boolean isPartidaTerminada() {
+        return partidaTerminada;
+    }
+
+    public boolean isEsMiTurno() {
+        return esMiTurno;
+    }
+
+    public void setEsMiTurno(boolean v) {
+        esMiTurno = v;
+    }
 }
