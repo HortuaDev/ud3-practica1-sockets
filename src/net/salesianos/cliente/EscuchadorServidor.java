@@ -1,4 +1,4 @@
-package net.cliente;
+package net.salesianos.cliente;
 
 import java.io.BufferedReader;
 
