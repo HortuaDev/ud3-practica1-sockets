@@ -151,4 +151,89 @@ public class GameManager {
         return sb.toString();
     }
 
+    public synchronized void iniciarPartida() {
+        partidaEnCurso = true;
+        rondaActual = 1;
+        turnoActual = 0;
+
+        StringBuilder nombres = new StringBuilder();
+        for (int i = 0; i < jugadores.size(); i++) {
+            if (i > 0)
+                nombres.append(",");
+            nombres.append(jugadores.get(i).getNombre());
+        }
+
+        broadcast("INICIO:" + nombres);
+        iniciarRonda();
+    }
+
+    private void iniciarRonda() {
+        broadcast("RONDA:" + rondaActual + "/" + TOTAL_RONDAS);
+        anunciarTurno();
+    }
+
+    private void anunciarTurno() {
+        if (jugadores.isEmpty())
+            return;
+        Jugador actual = jugadores.get(turnoActual);
+        broadcast("TURNO:" + actual.getNombre());
+        actual.enviar("ES_TU_TURNO"); // mensaje directo solo a él
+    }
+
+    public synchronized void procesarLanzamiento(Jugador jugador) {
+        if (!jugadores.get(turnoActual).equals(jugador)) {
+            jugador.enviar("ERROR:No es tu turno");
+            return;
+        }
+
+        int[] dados = new int[5];
+        for (int i = 0; i < 5; i++)
+            dados[i] = random.nextInt(6) + 1;
+
+        int suma = calcularSuma(dados);
+        int bonus = calcularBonus(dados);
+        String combinacion = detectarCombinacion(dados);
+        int total = suma + bonus;
+
+        jugador.sumarPuntos(total);
+
+        broadcast("DADOS:" + arrayToString(dados));
+        if (!combinacion.isEmpty()) {
+            broadcast("COMBINACION:" + jugador.getNombre() + ":" + combinacion);
+        }
+        broadcast("PUNTOS:" + jugador.getNombre() + ":" + total);
+        broadcast("MARCADOR:" + getMarcador());
+
+        turnoActual++;
+        if (turnoActual >= jugadores.size()) {
+            turnoActual = 0;
+            if (rondaActual >= TOTAL_RONDAS) {
+                finalizarPartida();
+            } else {
+                rondaActual++;
+                iniciarRonda();
+            }
+        } else {
+            anunciarTurno();
+        }
+    }
+
+    private void finalizarPartida() {
+        jugadores.sort((a, b) -> b.getPuntuacion() - a.getPuntuacion());
+
+        StringBuilder ranking = new StringBuilder();
+        for (int i = 0; i < jugadores.size(); i++) {
+            if (i > 0)
+                ranking.append(",");
+            Jugador j = jugadores.get(i);
+            ranking.append(j.getNombre()).append(":").append(j.getPuntuacion());
+        }
+
+        broadcast("FIN:" + ranking);
+
+        for (Jugador j : jugadores)
+            j.cerrar();
+        jugadores.clear();
+        partidaEnCurso = false;
+    }
 }
