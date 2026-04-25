@@ -38,3 +38,43 @@ Este escenario justifica la comunicación en red porque:
 - `Thread` (java.lang): un hilo por cliente en el servidor, y uno escuchador en el cliente
 - `synchronized`: evita condiciones de carrera en el GameManager
 - `volatile`: visibilidad de flags entre hilos en el cliente
+
+## Compilar y ejecutar
+
+### Compilar
+
+```bash
+javac -d out src/servidor/*.java
+javac -d out src/cliente/*.java
+```
+
+### Ejecutar
+
+```bash
+# Terminal 1 - Servidor
+java -cp out servidor.ServidorDados
+
+# Terminal 2 - Cliente 1
+java -cp out cliente.ClienteDados
+
+# Terminal 3 - Cliente 2
+java -cp out cliente.ClienteDados
+```
+
+## Protocolo de mensajes
+
+| Mensaje                   | Dirección          | Significado            |
+| ------------------------- | ------------------ | ---------------------- |
+| NOMBRE:Juan               | Cliente → Servidor | Registro               |
+| ESPERANDO:2/4             | Servidor → Todos   | Sala de espera         |
+| INICIO:Juan,Ana           | Servidor → Todos   | Partida iniciada       |
+| TURNO:Juan                | Servidor → Todos   | Turno de este jugador  |
+| ES_TU_TURNO               | Servidor → Jugador | Notificación directa   |
+| LANZAR                    | Cliente → Servidor | Pide tirar los dados   |
+| DADOS:3,5,2,6,1           | Servidor → Todos   | Resultado de los dados |
+| COMBINACION:Juan:TRIO +15 | Servidor → Todos   | Combinación detectada  |
+| PUNTOS:Juan:32            | Servidor → Todos   | Puntos de la ronda     |
+| MARCADOR:Juan:32,Ana:20   | Servidor → Todos   | Marcador acumulado     |
+| FIN:Juan:95,Ana:87        | Servidor → Todos   | Ranking final          |
+| DESCONECTADO:Ana          | Servidor → Todos   | Jugador abandonó       |
+| ERROR:mensaje             | Servidor → Cliente | Error                  |
