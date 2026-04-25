@@ -17,7 +17,6 @@ public class ClientHandler extends Thread {
     public void run() {
         try {
             jugador = new Jugador("?", socket);
-
             String primerMensaje = jugador.getIn().readLine();
 
             if (primerMensaje == null || !primerMensaje.startsWith("NOMBRE:")) {
@@ -27,7 +26,6 @@ public class ClientHandler extends Thread {
             }
 
             String nombre = primerMensaje.substring(7).trim();
-
             jugador = new Jugador(nombre, socket);
 
             if (!gameManager.agregarJugador(jugador)) {
@@ -38,9 +36,36 @@ public class ClientHandler extends Thread {
 
             System.out.println(nombre + " se conectó");
 
-        } catch (Exception e) {
-            System.out.println("Error en registro: " + e.getMessage());
+            gameManager.broadcast("ESPERANDO:"
+                    + gameManager.getNumJugadores()
+                    + "/" + GameManager.MAX_JUGADORES);
+
+            if (!gameManager.isPartidaEnCurso()
+                    && gameManager.haySuficientesJugadores()) {
+                Thread.sleep(2000);
+                if (!gameManager.isPartidaEnCurso()) {
+                    gameManager.iniciarPartida();
+                }
+            }
+
+            String mensaje;
+            while ((mensaje = jugador.getIn().readLine()) != null) {
+                if (mensaje.equals("LANZAR")) {
+                    gameManager.procesarLanzamiento(jugador);
+                }
+            }
+
+        } catch (java.io.IOException e) {
+            System.out.println("Conexión perdida: "
+                    + (jugador != null ? jugador.getNombre() : "desconocido"));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            if (jugador != null) {
+                gameManager.eliminarJugador(jugador);
+                jugador.cerrar();
+                System.out.println(jugador.getNombre() + " desconectado");
+            }
         }
     }
-
 }
