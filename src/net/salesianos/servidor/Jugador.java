@@ -20,8 +20,40 @@ public class Jugador {
         this.socket = socket;
         this.out = new PrintWriter(socket.getOutputStream(), true);
         this.in = new BufferedReader(
-            new InputStreamReader(socket.getInputStream())
-        );
+                new InputStreamReader(socket.getInputStream()));
+    }
+
+    public void enviar(String mensaje) {
+        out.println(mensaje);
+    }
+
+    public void sumarPuntos(int puntos) {
+        this.puntuacion += puntos;
+    }
+
+    public void cerrar() {
+        try {
+            if (!socket.isClosed())
+                socket.close();
+        } catch (IOException e) {
+            System.err.println("Error cerrando socket: " + e.getMessage());
+        }
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public int getPuntuacion() {
+        return puntuacion;
+    }
+
+    public PrintWriter getOut() {
+        return out;
+    }
+
+    public BufferedReader getIn() {
+        return in;
     }
 
 }
