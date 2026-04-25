@@ -28,3 +28,13 @@ Este escenario justifica la comunicación en red porque:
 - Envía su nombre para registrarse
 - Espera su turno y manda LANZAR al pulsar ENTER
 - Recibe y muestra todos los mensajes del servidor
+
+## Clases y librerías Java utilizadas
+
+- `ServerSocket` (java.net): abre el puerto y espera conexiones
+- `Socket` (java.net): representa el túnel de comunicación con cada cliente
+- `PrintWriter` (java.io): envía texto por el socket con println()
+- `BufferedReader` + `InputStreamReader` (java.io): recibe texto línea a línea
+- `Thread` (java.lang): un hilo por cliente en el servidor, y uno escuchador en el cliente
+- `synchronized`: evita condiciones de carrera en el GameManager
+- `volatile`: visibilidad de flags entre hilos en el cliente
